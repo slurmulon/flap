@@ -1,12 +1,12 @@
 {
-  "name": "latch",
+  "name": "flap",
   "version": "0.0.0",
   "description": "Guard clauses for readable conditions in JS",
-  "main": "./lib/latch.js",
+  "main": "./lib/flap.js",
   "scripts": {
     "build": "babel src --out-dir lib",
-    "lint": "eslint src/latch.js",
-    "start": "babel-node src/latch.js",
+    "lint": "eslint src/flap.js",
+    "start": "babel-node src/flap.js",
     "pretest": "npm run build",
     "test": "mocha --reporter nyan --compilers js:babel/register test",
     "auto-start": "nodemon --exec \"npm run lint && npm start\" --ignore public/js",
@@ -17,13 +17,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/slurmulon/latch.git"
+    "url": "git://github.com/slurmulon/flap.git"
   },
   "keywords": [],
   "author": "MadHax",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/slurmulon/latch/issues"
+    "url": "https://github.com/slurmulon/flap/issues"
   },
   "dependencies": {
     "acho": "^2.3.0",

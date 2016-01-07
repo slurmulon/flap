@@ -2,20 +2,20 @@
 
 import jsonPath from 'jsonpath'
 
-export class Latch {
+export class Flap {
 
   constructor(func: Function) {
     this.func = func || () => {}
   }
 
   // TODO - support more advanced condition systems like FSM
-  when({is, then}): Latch {
+  when({is, then}): Flap {
     if (is instanceof Function) {
-      return new Latch((...args) => 
+      return new Flap((...args) => 
         (is(...args) ? then : this.func)(...args)
       )
     } else {
-      return new Latch((...args) => {
+      return new Flap((...args) => {
         const matches = Array.from(args).filter(arg => {
           const query   = arg instanceof Object ? jsonPath.query(arg, is) : []
           const isQuery = !!query && query.length
@@ -30,29 +30,29 @@ export class Latch {
     return this
   }
 
-  unless({is, then}): Latch {
-    return new Latch(then).when({is, then: this.func})
+  unless({is, then}): Flap {
+    return new Flap(then).when({is, then: this.func})
   }
 
-  before(then: Function): Latch {
-    return new Latch((...args) => this.func(...then(...args)))
+  before(then: Function): Flap {
+    return new Flap((...args) => this.func(...then(...args)))
   }
 
-  after(then: Function): Latch {
-    return new Latch((...args) => then(this.func(...args)))
+  after(then: Function): Flap {
+    return new Flap((...args) => then(this.func(...args)))
   }
 
-  map(mapper: Function): Latch {
-    return new Latch((...args) => this.func(...args.map(mapper)))
+  map(mapper: Function): Flap {
+    return new Flap((...args) => this.func(...args.map(mapper)))
   }
 
-  filter(is: Function): Latch {
-    return new Latch((...args) => 
+  filter(is: Function): Flap {
+    return new Flap((...args) => 
       this.func(...args.filter(arg => !!is(arg)))
     )
   }
 
-  abort(is: Function): Latch {
+  abort(is: Function): Flap {
     return this.when({is, then: () => {}})
   }
 
@@ -71,13 +71,13 @@ export class Latch {
 }
 
 export function onto(func: Function) {
-  return new Latch(func)
+  return new Flap(func)
 }
 
 export function bind() {
-  Object.prototype.latch = (func) => new Latch(func)
+  Object.prototype.flap = (func) => new Flap(func)
 }
 
-export const latch = {onto, bind}
+export const flap = {onto, bind}
 
-export default latch
+export default flap

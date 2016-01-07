@@ -1,4 +1,4 @@
-# Latch
+# Flap
 
 > Guard clauses for readable conditions in JS
 
@@ -15,7 +15,7 @@
   * `when`
 
     ```javascript
-    const add = latch
+    const add = flap
       .onto((a,b,c) => a + b + c)
       .when({
         is   : (a,b,c) => a % 2 === 0
@@ -29,7 +29,7 @@
   * `unless`
 
     ```javascript
-    const add = latch
+    const add = flap
       .onto((a,b,c) => a + b + c)
       .unless({
         is   : (a,b,c) => a % 2 === 0
