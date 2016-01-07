@@ -1,0 +1,48 @@
+{
+  "name": "latch",
+  "version": "0.0.0",
+  "description": "Guard clauses for readable conditions in JS",
+  "main": "./lib/latch.js",
+  "scripts": {
+    "build": "babel src --out-dir lib",
+    "lint": "eslint src/latch.js",
+    "start": "babel-node src/latch.js",
+    "pretest": "npm run build",
+    "test": "mocha --reporter nyan --compilers js:babel/register test",
+    "auto-start": "nodemon --exec \"npm run lint && npm start\" --ignore public/js",
+    "preinstall": "npm install babel@5.8.21",
+    "postinstall": "npm run build",
+    "prepublish": "npm run build",
+    "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --compilers js:babel/register"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/slurmulon/latch.git"
+  },
+  "keywords": [],
+  "author": "MadHax",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/slurmulon/latch/issues"
+  },
+  "dependencies": {
+    "acho": "^2.3.0",
+    "babel": "^5.8.21",
+    "chance": "~0.7.5",
+    "glob": "^5.0.10",
+    "jsonpath": "^0.1.4",
+    "lodash": "~3.9.3",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "babel-eslint": "^4.0.10",
+    "blanket": "^1.2.1",
+    "chai": "^3.2.0",
+    "chai-as-promised": "^5.1.0",
+    "chai-things": "^0.2.0",
+    "eslint": "^1.1.0",
+    "istanbul": "^0.4.1",
+    "mocha": "^2.3.2",
+    "nodemon": "^1.4.1"
+  }
+}
