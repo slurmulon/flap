@@ -2,7 +2,7 @@
 
 import jsonPath from 'jsonpath'
 
-export class Flap {
+export class Guard {
 
   constructor(func: Function) {
     this.func = func || () => {}
@@ -11,11 +11,11 @@ export class Flap {
   // TODO - support more advanced condition systems like FSM
   when({is, then}): Flap {
     if (is instanceof Function) {
-      return new Flap((...args) => 
+      return new Guard((...args) =>
         (is(...args) ? then : this.func)(...args)
       )
     } else {
-      return new Flap((...args) => {
+      return new Guard((...args) => {
         const matches = Array.from(args).filter(arg => {
           const query   = arg instanceof Object ? jsonPath.query(arg, is) : []
           const isQuery = !!query && query.length
@@ -31,23 +31,23 @@ export class Flap {
   }
 
   unless({is, then}): Flap {
-    return new Flap(then).when({is, then: this.func})
+    return new Guard(then).when({is, then: this.func})
   }
 
   before(then: Function): Flap {
-    return new Flap((...args) => this.func(...then(...args)))
+    return new Guard((...args) => this.func(...then(...args)))
   }
 
   after(then: Function): Flap {
-    return new Flap((...args) => then(this.func(...args)))
+    return new Guard((...args) => then(this.func(...args)))
   }
 
   map(mapper: Function): Flap {
-    return new Flap((...args) => this.func(...args.map(mapper)))
+    return new Guard((...args) => this.func(...args.map(mapper)))
   }
 
   filter(is: Function): Flap {
-    return new Flap((...args) => 
+    return new Guard((...args) => 
       this.func(...args.filter(arg => !!is(arg)))
     )
   }
@@ -70,14 +70,14 @@ export class Flap {
 
 }
 
-export function onto(func: Function) {
-  return new Flap(func)
+export function guard(func: Function) {
+  return new Guard(func)
 }
 
 export function bind() {
-  Object.prototype.flap = (func) => new Flap(func)
+  Object.prototype.flap = (func) => new Guard(func)
 }
 
-export const flap = {onto, bind}
+export const flap = {guard, bind}
 
 export default flap

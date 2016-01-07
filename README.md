@@ -6,7 +6,7 @@
 
 ## Features
 
- * Wraps JS functions and their respective arguments with guard clauses found in languages such as Ruby and Elixir (particularly `when` and `unless`)
+ * Wraps JS functions and their arguments with [guard clauses](https://sourcemaking.com/refactoring/replace-nested-conditional-with-guard-clauses) found in languages such as Ruby and Elixir (particularly `when` and `unless`)
  * Improves readibility of complex conditions
  * Helps prevent deep nesting and callback hell
 
@@ -14,9 +14,9 @@
 
   * `when`
 
-    ```javascript
+    ```
     const add = flap
-      .onto((a,b,c) => a + b + c)
+      .guard((a,b,c) => a + b + c)
       .when({
         is   : (a,b,c) => a % 2 === 0
         then : (a,b,c) => this.func(a, b, c) * 2
@@ -28,9 +28,9 @@
 
   * `unless`
 
-    ```javascript
+    ```
     const add = flap
-      .onto((a,b,c) => a + b + c)
+      .guard((a,b,c) => a + b + c)
       .unless({
         is   : (a,b,c) => a % 2 === 0
         then : (a,b,c) => -1

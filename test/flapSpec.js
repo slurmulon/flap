@@ -13,12 +13,12 @@ describe('flap', () => {
   describe('class Flap', () => {
     describe('constructor', () => {
       it('should be defined', () => {
-        flap.Flap.constructor.should.be.a('function')
+        flap.Guard.constructor.should.be.a('function')
       })
 
       it('should accept a Function', () => {
         const testFunc  = () => {}
-        const testFlap = new flap.Flap(testFunc)
+        const testFlap = new flap.Guard(testFunc)
 
         testFlap.func.should.equal(testFunc)
       })
@@ -26,11 +26,11 @@ describe('flap', () => {
 
     describe('when', () => {
       it('should be defined', () => {
-        flap.Flap.prototype.when.should.be.a('function')
+        flap.Guard.prototype.when.should.be.a('function')
       })
 
       it('provided a function, should avoid calling the original function `func` if `is` is truthy as `value` is called', () => {
-        const testFlap = new flap.Flap(() => true).when({
+        const testFlap = new flap.Guard(() => true).when({
           is   : (a) => a === 0, 
           then : (a) => false
         })
@@ -40,7 +40,7 @@ describe('flap', () => {
       })
 
       it('provided a JsonPath query, should avoid calling the original function `func` if `is` query is non-empty as `value` is called', () => {
-        const testFlap = new flap.Flap(() => true).when({
+        const testFlap = new flap.Guard(() => true).when({
           is   : '$..b', 
           then : () => false
         })
@@ -53,21 +53,21 @@ describe('flap', () => {
         let testFlap
 
         beforeEach(() => {
-          testFlap = new flap.Flap((a,b) => a + b).
-            when({
+          testFlap = new flap.Guard((a,b) => a + b)
+            .when({
               is   : (a,b) => a < 0,
               then : (a,b) => 'a'
-            }).
-            when({
+            })
+            .when({
               is   : (a,b) => b < 0,
               then : (a,b) => 'b'
             }) 
         })
 
         it('should be chainable', () => {
-          const testFlap = new flap.Flap(() => true).when(() => {})
+          const testFlap = new flap.Guard(() => true).when(() => {})
 
-          testFlap.should.be.an.instanceof(flap.Flap)
+          testFlap.should.be.an.instanceof(flap.Guard)
         })
 
         it('should support N items in chain', () => {
@@ -84,21 +84,21 @@ describe('flap', () => {
 
     describe('value', () => {
       it('should be defined', () => {
-        flap.Flap.prototype.value.should.be.a('function')
+        flap.Guard.prototype.value.should.be.a('function')
       })
 
       it('should call every `Flap` in the chain', () => {
-        const testFlap = new flap.Flap((a,b,c) => a + b + c).
-          before((a,b,c) => [(a < 0 ? 1 : a), b, c]).
-          when({
+        const testFlap = new flap.Guard((a,b,c) => a + b + c)
+          .before((a,b,c) => [(a < 0 ? 1 : a), b, c])
+          .when({
             is   : (a,b,c) => a === b,
             then : (a,b,c) => b
-          }).
-          when({
+          })
+          .when({
             is   : (a,b,c) => a > b,
             then : (a,b,c) => c
-          }).
-          when({
+          })
+          .when({
             is   : (a,b,c) => typeof a === 'string',
             then : (a,b,c) => a + '!'
           })
@@ -114,15 +114,15 @@ describe('flap', () => {
       let testFlap
 
       beforeEach(() => {
-        testFlap = new flap.Flap((a,b,c) => a + b + c).before((a,b,c) => [(a < 0 ? 1 : a), b, c])
+        testFlap = new flap.Guard((a,b,c) => a + b + c).before((a,b,c) => [(a < 0 ? 1 : a), b, c])
       })
 
       it('should be defined', () => {
-        flap.Flap.prototype.before.should.be.a('function')
+        flap.Guard.prototype.before.should.be.a('function')
       })
 
       it('should be chainable', () => {
-        testFlap.should.be.an.instanceof(flap.Flap)
+        testFlap.should.be.an.instanceof(flap.Guard)
       })
 
       it('should process arguments provided to `value` before any `Flap`s process them', () => {
@@ -134,7 +134,7 @@ describe('flap', () => {
       let testFlap
 
       beforeEach(() => {
-        testFlap = new flap.Flap((a,b,c) => a + b + c)
+        testFlap = new flap.Guard((a,b,c) => a + b + c)
           .when({
             is   : (a,b,c) => a === 1,
             then : (a,b,c) => 5
@@ -143,11 +143,11 @@ describe('flap', () => {
       })
 
       it('should be defined', () => {
-        flap.Flap.prototype.after.should.be.a('function')
+        flap.Guard.prototype.after.should.be.a('function')
       })
 
       it('should be chainable', () => {
-        testFlap.should.be.an.instanceof(flap.Flap)
+        testFlap.should.be.an.instanceof(flap.Guard)
       })
 
       it('should process arguments provided to `value` after all other `Flap`s run', () => {
@@ -159,15 +159,15 @@ describe('flap', () => {
       let testFlap
 
       beforeEach(() => {
-        testFlap = new flap.Flap((a,b,c) => a + b + c).map((arg) => arg *= 3)
+        testFlap = new flap.Guard((a,b,c) => a + b + c).map((arg) => arg *= 3)
       })
 
       it('should be defined', () => {
-        flap.Flap.prototype.map.should.be.a('function')
+        flap.Guard.prototype.map.should.be.a('function')
       })
 
       it('should be chainable', () => {
-        testFlap.should.be.an.instanceof(flap.Flap)
+        testFlap.should.be.an.instanceof(flap.Guard)
       })
 
       it('should map arguments provided to `value` before any `Flap`s process them', () => {
@@ -179,15 +179,15 @@ describe('flap', () => {
       let testFlap
 
       beforeEach(() => {
-        testFlap = new flap.Flap((a,b,c) => a + b + c).map((arg) => arg *= 3)
+        testFlap = new flap.Guard((a,b,c) => a + b + c).map((arg) => arg *= 3)
       })
 
       it('should be defined', () => {
-        flap.Flap.prototype.map.should.be.a('function')
+        flap.Guard.prototype.map.should.be.a('function')
       })
 
       it('should be chainable', () => {
-        testFlap.should.be.an.instanceof(flap.Flap)
+        testFlap.should.be.an.instanceof(flap.Guard)
       })
 
       it('should intercept arguments provided to `value` before any `Flap`s process them', () => {
@@ -199,18 +199,18 @@ describe('flap', () => {
       let testFlap
 
       beforeEach(() => {
-        testFlap = new flap.Flap((a,b,c) => a + b + c).unless({
+        testFlap = new flap.Guard((a,b,c) => a + b + c).unless({
           is   : (a,b,c) => a % 2 === 0, 
           then : (a,b,c) => 1
         })
       })
 
       it('should be defined', () => {
-        flap.Flap.prototype.unless.should.be.a('function')
+        flap.Guard.prototype.unless.should.be.a('function')
       })
 
       it('should be chainable', () => {
-        testFlap.should.be.an.instanceof(flap.Flap)
+        testFlap.should.be.an.instanceof(flap.Guard)
       })
 
       it('should intercept arguments provided to `value` before any `Flap`s process them', () => {
@@ -223,15 +223,15 @@ describe('flap', () => {
       let testFlap
 
       beforeEach(() => {
-        testFlap = new flap.Flap((a,b,c) => a + b + c).abort((a) => a % 2 === 0)
+        testFlap = new flap.Guard((a,b,c) => a + b + c).abort((a) => a % 2 === 0)
       })
 
       it('should be defined', () => {
-        flap.Flap.prototype.abort.should.be.a('function')
+        flap.Guard.prototype.abort.should.be.a('function')
       })
 
       it('should be chainable', () => {
-        testFlap.should.be.an.instanceof(flap.Flap)
+        testFlap.should.be.an.instanceof(flap.Guard)
       })
 
       it('should avoid calling the function altogether if the condition is met', () => {
@@ -241,9 +241,9 @@ describe('flap', () => {
     })
   })
 
-  describe('onto', () => {
+  describe('guard', () => {
     it('should be exported', () => {
-      flap.onto.should.be.a('function')
+      flap.guard.should.be.a('function')
     })
 
     // TODO
