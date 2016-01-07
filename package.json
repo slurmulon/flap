@@ -1,6 +1,6 @@
 {
   "name": "flap",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Guard clauses for readable conditions in JS",
   "main": "./lib/flap.js",
   "scripts": {
