@@ -40,10 +40,10 @@
     "url": "https://github.com/slurmulon/flap/issues"
   },
   "dependencies": {
-    "babel": "^5.8.21",
     "jsonpath": "^0.1.4"
   },
   "devDependencies": {
+    "babel": "^5.8.21",
     "babel-eslint": "^4.0.10",
     "blanket": "^1.2.1",
     "chai": "^3.2.0",
