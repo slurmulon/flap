@@ -19,7 +19,21 @@
     "type": "git",
     "url": "git://github.com/slurmulon/flap.git"
   },
-  "keywords": [],
+  "keywords": [
+    "guard",
+    "clause",
+    "unless",
+    "when",
+    "any",
+    "all",
+    "query",
+    "args",
+    "arguments",
+    "state",
+    "condition",
+    "complex",
+    "flap"
+  ],
   "author": "MadHax",
   "license": "MIT",
   "bugs": {
