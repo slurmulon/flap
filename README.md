@@ -1,4 +1,4 @@
-# Flap
+# flap
 
 > Guard clauses for readable conditions in JS
 
@@ -15,20 +15,20 @@
   * `when`
 
     ```
-    const slopePos = flap
+    const positiveSlope = flap
       .guard((m,x,b) => (m * x) + b)
       .map((arg) => parseInt(arg))
       .when({
-        is   : (a,b,c) => (m * x) < 0,
-        then : (a,b,c) => 0
+        is   : (m,x,b) => (m * x) < 0,
+        then : (m,x,b) => 0
       })
       .after({
         then : (y) => Math.max(y, 90)
       })
 
-    slopePos.value(-1, -1, 3)     // 0
-    slopePos.value('1', '2.0', 3) // 6
-    slopePos.value(100, 200, 300) // 100
+    positiveSlope.value(-1, -1, 3)     // 0
+    positiveSlope.value('1', '2.0', 3) // 6
+    positiveSlope.value(100, 200, 300) // 100
     ```
 
   * `unless`
