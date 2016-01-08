@@ -320,6 +320,7 @@ describe('flap', () => {
     it('should bind a `guard` function to `Object.prototype` that is an alias of `new Guard`', () => {
       const testFunc = (a,b) => a + b
 
+      ((a) => a).guard.should.be.a('object') // anon function
       testFunc.guard.should.be.a('object')
       testFunc.guard.should.be.an.instanceof(flap.Guard)
       testFunc.guard.when({

@@ -8,7 +8,7 @@ export class Guard {
     this.func = func || () => {}
   }
 
-  value(...args) { // TODO - allow "unguarded value" override
+  value(...args) {
     return this.func(...args)
   }
 
@@ -45,7 +45,7 @@ export class Guard {
     return new Guard((...args) => then(this.func(...args)))
   }
 
-  map(mapper: Function): Flap { // TODO - support implicit argument type conversions
+  map(mapper: Function): Flap {
     return new Guard((...args) => this.func(...args.map(mapper)))
   }
 
@@ -65,8 +65,6 @@ export class Guard {
     return this.when({ is, then: () => {} })
   }
 
-  // pass
-  // fail
 }
 
 export function guard(func: Function) {
@@ -74,13 +72,13 @@ export function guard(func: Function) {
 }
 
 export function bind() {
-  Object.prototype.guard = (() => new Guard(this))()
+  Function.prototype.guard = (() => new Guard(this))()
 }
 
 export function unbind() {
-  delete Object.prototype.guard
+  delete Function.prototype.guard
 }
 
-export const flap = {guard, bind}
+export const flap = { guard, bind }
 
 export default flap
