@@ -26,7 +26,7 @@
     ```javascript
     const positiveSlope = flap
       .guard((m,x,b) => (m * x) + b)
-      .map((arg) => parseInt(arg))
+      .map(parseInt)
       .when({
         is   : (m,x,b) => (m * x) < 0,
         then : (m,x,b) => 0
@@ -74,7 +74,8 @@
 
   const divide = ((a,b) => a / b).guard.when({is: (a,b) => b === 0, then: (a,b) => 'derp'})
 
-  divide.value(1, 0) // returns 'derp'
+  divide.value(10, 2) // -> 5
+  divide.value(1, 0)  // -> 'derp'
   ```
 
 ## Contributing
@@ -84,3 +85,4 @@
 ## TODO
 
  - [ ] `inject` - implicit dependency injection
+ - [ ] documentation (code, guide)
