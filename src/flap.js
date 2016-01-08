@@ -15,7 +15,7 @@ export class Guard {
   when({is, then}): Flap {
     if (is instanceof Function) {
       return new Guard((...args) =>
-        (is(...args) ? then : this.func)(...args, this.func)
+        (is(...args) ? then : this.func)(...args)
       )
     } else {
       return new Guard((...args) => {
