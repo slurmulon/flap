@@ -1,7 +1,6 @@
 import 'blanket'
 
 import * as flap from '../src/flap'
-import _ from 'lodash'
 
 import chai from 'chai'
 import chaiThings from 'chai-things'
