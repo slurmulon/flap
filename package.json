@@ -1,7 +1,7 @@
 {
   "name": "flap",
   "version": "0.1.3",
-  "description": "Guard clauses for readable conditions in JS",
+  "description": "Guard clauses for ES6",
   "main": "./lib/flap.js",
   "scripts": {
     "build": "babel src --out-dir lib",
@@ -20,19 +20,19 @@
     "url": "git://github.com/slurmulon/flap.git"
   },
   "keywords": [
-    "guard",
-    "clause",
-    "unless",
-    "when",
-    "any",
-    "all",
-    "query",
-    "args",
-    "arguments",
-    "state",
+    "flap",
     "condition",
+    "state",
     "complex",
-    "flap"
+    "arguments",
+    "args",
+    "query",
+    "all",
+    "any",
+    "when",
+    "unless",
+    "clause",
+    "guard"
   ],
   "author": "MadHax",
   "license": "MIT",

@@ -1,12 +1,21 @@
 # flap
 
-> Guard clauses for readable conditions in JS
+> Guard clauses for ES6
 
 -----
 
 ## Features
 
- * Wraps JS functions and their arguments with [guard clauses](https://sourcemaking.com/refactoring/replace-nested-conditional-with-guard-clauses) found in languages such as Ruby and Elixir (particularly `when` and `unless`)
+ * Wraps JS functions and their arguments with [guard clauses](https://sourcemaking.com/refactoring/replace-nested-conditional-with-guard-clauses) found in languages such as Ruby and Elixir:
+    * __`when`__
+    * __`unless`__
+    * `map`
+    * `filter`
+    * `all`
+    * `any`
+    * `before`
+    * `after`
+    * `abort`
  * Improves readibility of complex conditions
  * Helps prevent deep nesting and callback hell
 
@@ -14,7 +23,7 @@
 
   * `when`
 
-    ```
+    ```javascript
     const positiveSlope = flap
       .guard((m,x,b) => (m * x) + b)
       .map((arg) => parseInt(arg))
@@ -33,7 +42,7 @@
 
   * `unless`
 
-    ```
+    ```javascript
     const add = flap
       .guard((a,b,c) => a + b + c)
       .unless({
@@ -44,3 +53,34 @@
     add.value(2, 4, 6) // 12
     add.value(1, 3, 5) // -1
     ````
+
+## Installation
+
+  ```
+  $ npm install flap
+  ```
+
+## Usage
+
+  ```javascript
+  import flap from 'flap'
+  ```
+
+  after `flap` is inmported, you may optionally bind `guard` to all functions
+  via `flap.bind` for a DSL-like syntax:
+
+  ```javascript
+  flap.bind()
+
+  const divide = ((a,b) => a / b).guard.when({is: (a,b) => b === 0, then: (a,b) => 'derp'})
+
+  divide.value(1, 0) // returns 'derp'
+  ```
+
+## Contributing
+
+  Contributions are always welcome! Simply open a PR with completely covered tests.
+
+## TODO
+
+ - [ ] `inject` - implicit dependency injection
