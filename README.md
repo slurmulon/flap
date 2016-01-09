@@ -31,9 +31,7 @@
         is   : (m,x,b) => (m * x) < 0,
         then : (m,x,b) => 0
       })
-      .after({
-        then : (y) => Math.max(y, 90)
-      })
+      .after((y) => Math.max(y, 90))
 
     positiveSlope.value(-1, -1, 3)     // 0
     positiveSlope.value('1', '2.0', 3) // 6
@@ -50,8 +48,8 @@
         then : (a,b,c) => -1
       })
 
-    add.value(2, 4, 6) // 12
-    add.value(1, 3, 5) // -1
+    add.value(2, 4, 6) // -> 12
+    add.value(1, 3, 5) // -> -1
     ````
 
 ## Installation
@@ -62,21 +60,42 @@
 
 ## Usage
 
-  ```javascript
-  import flap from 'flap'
-  ```
+  * Basic
 
-  after `flap` is inmported, you may optionally bind `guard` to all functions
-  via `flap.bind` for a DSL-like syntax:
+    ```javascript
+    import flap from 'flap'
+    ```
 
-  ```javascript
-  flap.bind()
+    after `flap` is imported, you may optionally bind `guard` to all functions
+    via `flap.bind` for a DSL-like syntax:
 
-  const divide = ((a,b) => a / b).guard.when({is: (a,b) => b === 0, then: (a,b) => 'derp'})
+    ```javascript
+    flap.bind()
 
-  divide.value(10, 2) // -> 5
-  divide.value(1, 0)  // -> 'derp'
-  ```
+    const divide = ((a,b) => a / b).guard.when({
+      is   : (a,b) => b === 0,
+      then : (a,b) => 'derp'
+    })
+
+    divide.value(10, 2) // -> 5
+    divide.value(1, 0)  // -> 'derp'
+    ```
+
+  * Queries
+
+    ```javascript
+    flap.bind() // not required for querying, just some sugar
+
+    // deeply searches for all hypermedia links with a defined href
+    const links = (() => []).guard.when({
+      is   : '$..link[?(@.href)',
+      then : (link) => link
+    })
+
+    links.value({ response: null })                // -> []
+    links.value({ response: { link: null } })      // -> []
+    links.value({ response: { link: '/v1/api' } }) // -> [{ link: '/v1/api' }]
+    ```
 
 ## Contributing
 

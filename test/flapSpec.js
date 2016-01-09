@@ -295,55 +295,57 @@ describe('flap', () => {
     })
   })
 
-  describe('guard', () => {
-    it('should be exported', () => {
-      flap.guard.should.be.a('function')
+  describe('module exports', () => {
+    describe('guard', () => {
+      it('should be exported', () => {
+        flap.guard.should.be.a('function')
+      })
+
+      it('should create and return a new instance of `Guard`', () => {
+        const testFunc  = (a, b) => a + b
+        const testGuard = flap.guard(testFunc)
+
+        testGuard.should.be.an.instanceof(flap.Guard)
+        testGuard.func.should.equal(testFunc)
+      })
     })
 
-    it('should create and return a new instance of `Guard`', () => {
-      const testFunc  = (a, b) => a + b
-      const testGuard = flap.guard(testFunc)
+    describe('bind', () => {
+      before(flap.bind)
+      after(flap.unbind)
 
-      testGuard.should.be.an.instanceof(flap.Guard)
-      testGuard.func.should.equal(testFunc)
-    })
-  })
+      it('should be exported', () => {
+        flap.bind.should.be.a('function')
+      })
 
-  describe('bind', () => {
-    before(flap.bind)
-    after(flap.unbind)
+      it('should bind a `guard` function to `Function.prototype` that is an alias of `new Guard`', () => {
+        const testFunc = (a,b) => a + b
 
-    it('should be exported', () => {
-      flap.bind.should.be.a('function')  
-    })
-
-    it('should bind a `guard` function to `Object.prototype` that is an alias of `new Guard`', () => {
-      const testFunc = (a,b) => a + b
-
-      ((a) => a).guard.should.be.a('object') // anon function
-      testFunc.guard.should.be.a('object')
-      testFunc.guard.should.be.an.instanceof(flap.Guard)
-      testFunc.guard.when({
-        is   : (a,b) => a % 2 === 0,
-        then : (a,b) => true
-      }).value(2, 3).should.equal(true)
-    })
-  })
-
-  describe('unbind', () => {
-    before(flap.bind)
-    after(flap.unbind)
-
-    it('should be exported', () => {
-      flap.unbind.should.be.a('function')
+        ((a) => a).guard.should.be.a('object') // anon function
+        testFunc.guard.should.be.a('object')
+        testFunc.guard.should.be.an.instanceof(flap.Guard)
+        testFunc.guard.when({
+          is   : (a,b) => a % 2 === 0,
+          then : (a,b) => true
+        }).value(2, 3).should.equal(true)
+      })
     })
 
-    it('should unbind any `guard` function on `Object.prototype`', () => {
-      flap.unbind()
+    describe('unbind', () => {
+      before(flap.bind)
+      after(flap.unbind)
 
-      const testFunc = (a,b) => a + b
+      it('should be exported', () => {
+        flap.unbind.should.be.a('function')
+      })
 
-      chai.should(testFunc.guard).not.exist
+      it('should unbind any `guard` function on `Object.prototype`', () => {
+        flap.unbind()
+
+        const testFunc = (a,b) => a + b
+
+        chai.should(testFunc.guard).not.exist
+      })
     })
   })
 })
