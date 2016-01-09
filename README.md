@@ -35,7 +35,7 @@
 
     positiveSlope.value(-1, -1, 3)     // 0
     positiveSlope.value('1', '2.0', 3) // 6
-    positiveSlope.value(100, 200, 300) // 100
+    positiveSlope.value(100, 200, 300) // 90
     ```
 
   * `unless`
@@ -80,8 +80,17 @@
     divide.value(10, 2) // -> 5
     divide.value(1, 0)  // -> 'derp'
     ```
+    or, if you're more conservative, you can spare changes to `Function.prototype` and
+    and just reference `flap.guard` directly:
+
+    ```javascript
+    const add1 = flap.guard((a,b) => a + b)
+    const add2 = new flap.Guard((a,b) => a + b) // same as `add1`
+    ```
 
   * Queries
+
+    When `is` is not a `Function`, it will be interpreted as a [JsonPath](http://goessner.net/articles/JsonPath/) query:
 
     ```javascript
     flap.bind() // not required for querying, just some sugar
@@ -104,4 +113,4 @@
 ## TODO
 
  - [ ] `inject` - implicit dependency injection
- - [ ] documentation (code, guide)
+ - [ ] documentation (guide)
