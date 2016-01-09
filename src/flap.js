@@ -7,7 +7,8 @@ import jsonPath from 'jsonpath'
  * found in languages such as Elixir and Ruby.
  *
  * Useful for extending the logic of functions in a non-invasive
- * manner and improving readability and/or learnability.
+ * manner and improving readability and/or learnability by reducing
+ * deeply nested constructs / callback hell.
  */
 export class Guard {
 
@@ -21,7 +22,7 @@ export class Guard {
   }
 
   /**
-   * Delegates arguments through clause chain and provides final value.
+   * Delegates arguments through guard clause chain and provides final value.
    *
    * @param {...Object} arguments to pass through function chain
    * @returns {Object}
@@ -31,7 +32,6 @@ export class Guard {
   }
 
   /**
-   * Delegates arguments through clause chain and provides final value.
    * If `is` is truthy for the set of arguments, `then` will be called
    * with the arguments. Otherwise the original function in the Guard
    * will be called.
@@ -39,6 +39,19 @@ export class Guard {
    * @param {Function|String} is Function or JsonPath pattern to use as truthy condition
    * @param {Function} then callback Function for when `is` condition matches arguments
    * @returns {Guard} new Guard (identical to original if condition isn't met)
+   * @example
+   *
+   * import flap from 'flap'
+   *
+   * const isEven = flap.guard(() => false)
+   *   .map(parseInt) // ensure all arguments are numbers
+   *   .when({
+   *     is   : (x) = x % 2 === 0,
+   *     then : (x) => true
+   *   })
+   *
+   * isEven(1)   // -> false
+   * isEven('6') // -> true
    */
   when({is, then}): Guard {
     if (is instanceof Function) {
@@ -78,7 +91,7 @@ export class Guard {
 
   /**
    * When every argument is truthy for `is`, call `then`. Otherwise call
-   * then original guarded function.
+   * the original guarded function.
    *
    * @param {Function|String} is Function or JsonPath pattern to use as truthy condition
    * @param {Function} then callback Function for when `is` condition matches arguments
@@ -90,7 +103,7 @@ export class Guard {
 
   /**
    * When any argument is truthy for `is`, call `then`. Otherwise call
-   * then original guarded function.
+   * the original guarded function.
    *
    * @param {Function|String} is Function or JsonPath pattern to use as truthy condition
    * @param {Function} then callback Function for when `is` condition matches arguments
@@ -101,7 +114,7 @@ export class Guard {
   }
 
   /**
-   * Maps arguments against `then` before any other functions in the guarded chain
+   * Processes arguments with `then` before any other functions in the guarded chain
    * are called.
    *
    * @param {Function} then callback Function for when `is` condition matches arguments
@@ -112,7 +125,7 @@ export class Guard {
   }
 
   /**
-   * Maps final guarded chain result against `then`.
+   * Processes final guarded chain result with `then`.
    *
    * @param {Function} then callback Function for when `is` condition matches arguments
    * @returns {Guard} new Guard with `then` at the bottom of the chain
@@ -122,7 +135,7 @@ export class Guard {
   }
 
   /**
-   * Maps each argument against `mapper`.
+   * Maps each argument with `mapper`.
    *
    * @param {Function} mapper callback Function to call on each argument
    * @returns {Guard} new Guard with mapped arguments provided to original function
@@ -132,7 +145,7 @@ export class Guard {
   }
 
   /**
-   * Filters arguments against `is` (only those matchin truthy will be passed in).
+   * Filters arguments that match `is` (only those matchin truthy will be passed in).
    *
    * @param {Function} is filter Function (truthy)
    * @returns {Guard} new Guard with filtered arguments provided to original function
@@ -165,7 +178,7 @@ export function guard(func: Function) {
 
 /**
  * Sets a `guard` function onto the global `Function.prototype` object.
- * Allows `.guard` object to be referenced on anonymous functions directly.
+ * Allows `guard` object to be referenced on anonymous functions directly.
  *
  * Note that `value()` must be called instead of the traditional '()'.
  *
@@ -175,13 +188,13 @@ export function guard(func: Function) {
  *
  * flap.bind()
  *
- * const add = ((a,b) => a / b).guard.when({
+ * const divide = ((a,b) => a / b).guard.when({
  *   is   : (a,b) => b === 0,
  *   then : (a,b) => a / 1
  * })
  *
- * add.value(6, 2) // -> 3
- * add.value(6, 0) // -> 6 (0 is replaced by 1 via `when`)
+ * divide.value(6, 2) // -> 3
+ * divide.value(6, 0) // -> 6 (0 is replaced by 1 via `when`)
  */
 export function bind() {
   Function.prototype.guard = (() => new Guard(this))()
@@ -194,6 +207,12 @@ export function unbind() {
   delete Function.prototype.guard
 }
 
+/**
+ * Module object definition.
+ */
 export const flap = { guard, bind }
 
+/**
+ * Module export.
+ */
 export default flap
