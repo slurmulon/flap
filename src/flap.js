@@ -166,6 +166,22 @@ export function guard(func: Function) {
 /**
  * Sets a `guard` function onto the global `Function.prototype` object.
  * Allows `.guard` object to be referenced on anonymous functions directly.
+ *
+ * Note that `value()` must be called instead of the traditional '()'.
+ *
+ * @example
+ *
+ * import flap from 'flap'
+ *
+ * flap.bind()
+ *
+ * const add = ((a,b) => a / b).guard.when({
+ *   is   : (a,b) => b === 0,
+ *   then : (a,b) => a / 1
+ * })
+ *
+ * add.value(6, 2) // -> 3
+ * add.value(6, 0) // -> 6 (0 is replaced by 1 via `when`)
  */
 export function bind() {
   Function.prototype.guard = (() => new Guard(this))()
