@@ -16,12 +16,15 @@
     * `before`
     * `after`
     * `abort`
- * Improves readibility of complex conditions
+ * Improves readability of complex conditions
  * Helps prevent deep nesting and callback hell
 
 ## Examples
 
   * `when`
+
+    This example also uses `map` to ensure all arguments are `Number`s and
+    `after` to ensure that the final value doesn't exceeed 90.
 
     ```javascript
     const positiveSlope = flap
@@ -97,7 +100,7 @@
 
     // deeply searches for all hypermedia links with a defined href
     const links = (() => []).guard.when({
-      is   : '$..link[?(@.href)',
+      is   : '$..link[?(@.href)]',
       then : (link) => link
     })
 
