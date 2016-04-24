@@ -40,11 +40,10 @@
         then : (m,x,b) => undefined
       })
       .after((y) => y instanceof Number ? y.toFixed(2) : y)
-      .value
 
-    linear(1, -1, 3)        // 0.00
-    linear('1', '2.0', '3') // 6.00
-    linear(-2, 2, 5)        // ???
+    linear.value(1, -1, 3)        // 0.00
+    linear.value('1', '2.0', '3') // 6.00
+    linear.value(-2, 2, 5)        // ???
     ```
 
   * `unless`
@@ -56,10 +55,9 @@
         is   : (a,b,c) => a % 2 === 0,
         then : (a,b,c) => 'oddball'
       })
-      .value
 
-    add(2, 4, 6) // -> 12
-    add(1, 3, 5) // -> 'oddball'
+    add.value(2, 4, 6) // -> 12
+    add.value(1, 3, 5) // -> 'oddball'
     ````
 
 ## Installation
