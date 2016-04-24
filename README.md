@@ -25,22 +25,26 @@
   * `when`
 
     This example also uses `map` to ensure all arguments are `Number`s and
-    `after` to ensure that the final value doesn't fall below 0.
+    `after` to format the final result to 3 decimal places
 
     ```javascript
-    const positiveSlope = flap
+    const linear = flap
       .guard((m,x,b) => (m * x) + b)
       .map(parseInt)
       .when({
         is   : (m,x,b) => (m * x) < 0,
         then : (m,x,b) => 0
       })
-      .after((y) => Math.floor(y, 0))
+      .when({
+        is   : (m,x,b) => m <= 0,
+        then : (m,x,b) => undefined
+      })
+      .after((y) => y instanceof Number ? y.toFixed(2) : y)
       .value
 
-    positiveSlope(-1, -1, 3)       // 0
-    positiveSlope('1', '2.0', '3') // 6
-    positiveSlope(100, 200, 300)   // 90
+    linear(1, -1, 3)        // 0.00
+    linear('1', '2.0', '3') // 6.00
+    linear(-2, 2, 5)        // ???
     ```
 
   * `unless`

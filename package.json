@@ -10,7 +10,7 @@
     "pretest": "npm run build",
     "test": "mocha --reporter nyan --compilers js:babel-register test",
     "auto-start": "nodemon --exec \"npm run lint && npm start\" --ignore public/js",
-    "postinstall": "npm run build",
+    "preinstall": "npm install --ignore-scripts && npm run build",
     "prepublish": "npm run build",
     "coverage": "node ./node_modules/.bin/nyc --require babel-core/register node_modules/.bin/mocha test/"
   },
@@ -39,7 +39,7 @@
     "url": "https://github.com/slurmulon/flap/issues"
   },
   "dependencies": {
-    "json-rel": "~0.0.8"
+    "json-rel": "~0.0.10"
   },
   "devDependencies": {
     "babel-cli": "^6.7.5",
