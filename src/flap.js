@@ -63,7 +63,7 @@ export class Guard {
         let matches = []
 
         if (is && is.constructor === String) {
-          matches = args.filter(arg => !!rel.$(is, arg).get())
+          matches = args.filter(arg => !!rel.$(is, arg).any())
         } else if (is instanceof rel.AbstractRel) {
           matches = args.filter(arg => is.any(arg))
         }

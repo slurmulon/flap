@@ -1,6 +1,6 @@
 # flap
 
-> Guard clauses for ES6
+> :moyai: Guard clauses for ES6
 
 -----
 
@@ -96,7 +96,9 @@
 
   * Queries
 
-    When `is` is not a `Function`, it will be interpreted as a [JsonPath](http://goessner.net/articles/JsonPath/) query:
+    When `is` is not a `Function`, it will be interpreted as a [json-rel](http://npmjs.com/slurmulon/json-rel/) path, which is simply a unification of the `json-pointer`, `json-path`, and `json-query` specifications.
+
+    These specifications are extremely useful for performing complex / conditional searches on objects:
 
     ```javascript
     flap.bind() // not required for querying, just some sugar
@@ -115,6 +117,8 @@
 ## Contributing
 
   Contributions are always welcome! Simply open a PR with completely covered tests.
+
+  `npm run coverage`
 
 ## TODO
 
