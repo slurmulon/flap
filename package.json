@@ -1,6 +1,6 @@
 {
   "name": "flap",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Guard clauses for ES6",
   "main": "./lib/flap.js",
   "scripts": {
