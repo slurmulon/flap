@@ -1,6 +1,7 @@
 import 'blanket'
 
 import * as flap from '../src/flap'
+import {$, path, pointer, query, AbstractRel} from 'json-rel'
 
 import chai from 'chai'
 import chaiThings from 'chai-things'
@@ -44,9 +45,39 @@ describe('flap', () => {
         testGuard.value(1).should.be.true
       })
 
-      it('provided a JsonPath query, should avoid calling the original function `func` if `is` query is non-empty as `value` is called', () => {
+      it('provided a JSON relation (string), should avoid calling the original function `func` if `is` query is non-empty as `value` is called', () => {
         const testGuard = new flap.Guard(() => true).when({
-          is   : '$..b', 
+          is   : '/b',
+          then : () => false
+        })
+
+        testGuard.value({a: 'z'}).should.be.true
+        testGuard.value({b: 'y'}).should.be.false
+      })
+
+      it('provided a JSON relation (Pointer literal), should avoid calling the original function `func` if `is` query is non-empty as `value` is called', () => {
+        const testGuard = new flap.Guard(() => true).when({
+          is   : pointer('/b'),
+          then : () => false
+        })
+
+        testGuard.value({a: 'z'}).should.be.true
+        testGuard.value({b: 'y'}).should.be.false
+      })
+
+      it('provided a JSON relation (Path literal), should avoid calling the original function `func` if `is` query is non-empty as `value` is called', () => {
+        const testGuard = new flap.Guard(() => true).when({
+          is   : path('$..b'),
+          then : () => false
+        })
+
+        testGuard.value({a: 'z'}).should.be.true
+        testGuard.value({b: 'y'}).should.be.false
+      })
+
+      it('provided a JSON relation (Abstract literal), should avoid calling the original function `func` if `is` query is non-empty as `value` is called', () => {
+        const testGuard = new flap.Guard(() => true).when({
+          is   : $('/b'),
           then : () => false
         })
 

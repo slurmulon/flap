@@ -1,6 +1,6 @@
 'use strict'
 
-import jsonPath from 'jsonpath'
+import * as rel from 'json-rel'
 
 /**
  * Implements several chainable guard clauses, similar to those
@@ -17,8 +17,8 @@ export class Guard {
    *
    * @param {Function} func function to guard with clauses
    */
-  constructor(func: Function) {
-    this.func = func || () => {}
+  constructor(func: Function = _ => {}) {
+    this.func = func
   }
 
   /**
@@ -60,13 +60,14 @@ export class Guard {
       )
     } else {
       return new Guard((...args) => {
-        const matches = args.filter(arg => {
-          const query   = arg instanceof Object ? jsonPath.query(arg, is) : []
-          const isQuery = query && query.length
+        let matches = []
 
-          return isQuery
-        })
-        
+        if (is && is.constructor === String) {
+          matches = args.filter(arg => !!rel.$(is, arg).get())
+        } else if (is instanceof rel.AbstractRel) {
+          matches = args.filter(arg => is.any(arg))
+        }
+
         return matches.length ? then(...matches) : this.func(...args)
       })
     }
