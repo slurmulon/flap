@@ -1,6 +1,6 @@
 'use strict'
 
-import * as rel from 'json-rel'
+import {$, AbstractRef} from 'json-where'
 
 /**
  * Implements several chainable guard clauses, similar to those
@@ -13,22 +13,27 @@ import * as rel from 'json-rel'
 export class Guard {
 
   /**
-   * Wraps a function with a chainable guard clause object.
+   * Wraps a Function with a chainable guard clause object and then returns it
+   * 
+   * Note that as of version 1.0.0, a Function appended with Guard own 
+   * properites is returned instead of a Guard! This allows the guarded function
+   * to be directly invokable, so you no longer have to call `.value(..)` and can work
+   * with it as you would any other Function. It does, however, come at the cost
+   * of not being able to use `instanceof` or assert the prototype chain for `flap.Guard`
    *
    * @param {Function} func function to guard with clauses
+   * @returns {Function} native Function with Guard own properties/methods appended
    */
   constructor(func: Function = _ => {}) {
     this.func = func
-  }
 
-  /**
-   * Delegates arguments through guard clause chain and provides final value.
-   *
-   * @param {...Object} arguments to pass through function chain
-   * @returns {Object}
-   */
-  value(...args): Object {
-    return this.func(...args)
+    Object.getOwnPropertyNames(Guard.prototype).forEach((prop) => {
+      if (prop !== 'constructor') {
+        this.func[prop] = this[prop].bind(this)
+      }
+    })
+
+    return this.func
   }
 
   /**
@@ -38,7 +43,7 @@ export class Guard {
    *
    * @param {Function|String} is Function or JsonPath pattern to use as truthy condition
    * @param {Function} then callback Function for when `is` condition matches arguments
-   * @returns {Guard} new Guard (identical to original if condition isn't met)
+   * @returns {Function} new Guard function (identical to original if condition isn't met)
    * @example
    *
    * import flap from 'flap'
@@ -53,7 +58,7 @@ export class Guard {
    * isEven(1)   // -> false
    * isEven('6') // -> true
    */
-  when({is, then}): Guard {
+  when({is, then}): Function {
     if (is instanceof Function) {
       return new Guard((...args) =>
         (is(...args) ? then : this.func)(...args)
@@ -63,8 +68,8 @@ export class Guard {
         let matches = []
 
         if (is && is.constructor === String) {
-          matches = args.filter(arg => !!rel.$(is, arg).any())
-        } else if (is instanceof rel.AbstractRel) {
+          matches = args.filter(arg => $(is, arg).any())
+        } else if (is instanceof AbstractRef) {
           matches = args.filter(arg => is.any(arg))
         }
 
@@ -86,7 +91,7 @@ export class Guard {
    * @param {Function} then callback Function for when `is` condition matches arguments
    * @returns {Guard} new Guard (identical to original if condition isn't met)
    */
-  unless({is, then}): Guard {
+  unless({is, then}): Function {
     return new Guard(then).when({ is, then: this.func })
   }
 
@@ -98,7 +103,7 @@ export class Guard {
    * @param {Function} then callback Function for when `is` condition matches arguments
    * @returns {Guard} new Guard (identical to original if condition isn't met)
    */
-  all({is, then}): Guard {
+  all({is, then}): Function {
     return this.when({ is: (...args) => args.length === args.filter(is).length, then })
   }
 
@@ -110,7 +115,7 @@ export class Guard {
    * @param {Function} then callback Function for when `is` condition matches arguments
    * @returns {Guard} new Guard (identical to original if condition isn't met)
    */
-  any({is, then}): Guard {
+  any({is, then}): Function {
     return this.when({ is: (...args) => args.filter(is).length, then })
   }
 
@@ -121,7 +126,7 @@ export class Guard {
    * @param {Function} then callback Function for when `is` condition matches arguments
    * @returns {Guard} new Guard with `then` at the top of the chain
    */
-  before(then: Function): Guard {
+  before(then: Function): Function {
     return new Guard((...args) => this.func(...then(...args)))
   }
 
@@ -131,7 +136,7 @@ export class Guard {
    * @param {Function} then callback Function for when `is` condition matches arguments
    * @returns {Guard} new Guard with `then` at the bottom of the chain
    */
-  after(then: Function): Guard {
+  after(then: Function): Function {
     return new Guard((...args) => then(this.func(...args)))
   }
 
@@ -141,7 +146,7 @@ export class Guard {
    * @param {Function} mapper callback Function to call on each argument
    * @returns {Guard} new Guard with mapped arguments provided to original function
    */
-  map(mapper: Function): Guard {
+  map(mapper: Function): Function {
     return new Guard((...args) => this.func(...args.map(mapper)))
   }
 
@@ -151,7 +156,7 @@ export class Guard {
    * @param {Function} is filter Function (truthy)
    * @returns {Guard} new Guard with filtered arguments provided to original function
    */
-  filter(is: Function): Guard {
+  filter(is: Function): Function {
     return new Guard((...args) => this.func(...args.filter(is)))
   }
 
@@ -161,7 +166,7 @@ export class Guard {
    * @param {Function} is condition to abort on
    * @returns {Guard} new Guard with appended abort `when` clause
    */
-  abort(is: Function): Guard {
+  abort(is: Function): Function {
     return this.when({ is, then: () => {} })
   }
 
@@ -181,8 +186,6 @@ export function guard(func: Function) {
  * Sets a `guard` function onto the global `Function.prototype` object.
  * Allows `guard` object to be referenced on anonymous functions directly.
  *
- * Note that `value()` must be called instead of the traditional '()'.
- *
  * @example
  *
  * import flap from 'flap'
@@ -194,11 +197,17 @@ export function guard(func: Function) {
  *   then : (a,b) => a / 1
  * })
  *
- * divide.value(6, 2) // -> 3
- * divide.value(6, 0) // -> 6 (0 is replaced by 1 via `when`)
+ * divide(6, 2) // -> 3
+ * divide(6, 0) // -> 6 (0 is replaced by 1 via `when`)
  */
 export function bind() {
-  Function.prototype.guard = (() => new Guard(this))()
+  Object.defineProperty(Function.prototype, 'guard', {
+    enumerable: false,
+    configurable: true,
+    get: function() {
+      return new Guard(this.bind({}))
+    }
+  })
 }
 
 /**

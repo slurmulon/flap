@@ -1,13 +1,33 @@
 import 'blanket'
 
 import * as flap from '../src/flap'
-import {$, path, pointer, query, AbstractRel} from 'json-rel'
+import {$, path, pointer, query} from 'json-where'
 
 import chai from 'chai'
 import chaiThings from 'chai-things'
 
 chai.should()
 chai.use(chaiThings)
+
+const isChainable = (obj) => {
+  let expected = []
+
+  Object.getOwnPropertyNames(flap.Guard.prototype).forEach((prop) => {
+    if (prop !== 'constructor') {
+      expected.push(prop)
+    }
+  })
+
+  let actual = []
+
+  Object.getOwnPropertyNames(obj).forEach((prop) => {
+    if (prop !== 'constructor') {
+      actual.push(prop)
+    }
+  })
+
+  return obj instanceof flap.Guard || actual.includes(...expected)
+}
 
 describe('flap', () => {
   describe('class Flap', () => {
@@ -16,17 +36,17 @@ describe('flap', () => {
         flap.Guard.constructor.should.be.a('function')
       })
 
-      it('should accept a Function', () => {
+      it('should return a Function', () => {
         const testFunc  = () => {}
         const testGuard = new flap.Guard(testFunc)
 
-        testGuard.func.should.equal(testFunc)
+        testGuard.should.be.a('function')
       })
 
-      it('should use an empty anonymous function when no func is provided', () => {
+      it('should be chainable', () => {
         const testGuard = new flap.Guard()
 
-        chai.should(testGuard.func()).not.exist
+        isChainable(testGuard).should.be.true
       })
     })
 
@@ -35,54 +55,64 @@ describe('flap', () => {
         flap.Guard.prototype.when.should.be.a('function')
       })
 
-      it('provided a function, should avoid calling the original function `func` if `is` is truthy as `value` is called', () => {
+      it('provided a function, should avoid calling the original function `func` if `is` is truthy as guarded function is called', () => {
         const testGuard = new flap.Guard(() => true).when({
           is   : (a) => a === 0, 
           then : (a) => false
         })
 
-        testGuard.value(0).should.be.false
-        testGuard.value(1).should.be.true
+        testGuard(0).should.be.false
+        testGuard(1).should.be.true
       })
 
-      it('provided a JSON relation (string), should avoid calling the original function `func` if `is` query is non-empty as `value` is called', () => {
+      it('provided a JSON relation (string), should avoid calling the original function `func` if `is` query is non-empty as guarded function is called', () => {
         const testGuard = new flap.Guard(() => true).when({
           is   : '/b',
           then : () => false
         })
 
-        testGuard.value({a: 'z'}).should.be.true
-        testGuard.value({b: 'y'}).should.be.false
+        testGuard({a: 'z'}).should.be.true
+        testGuard({b: 'y'}).should.be.false
       })
 
-      it('provided a JSON relation (Pointer literal), should avoid calling the original function `func` if `is` query is non-empty as `value` is called', () => {
+      it('provided a JSON relation (Pointer literal), should avoid calling the original function `func` if `is` query is non-empty as guarded function is called', () => {
         const testGuard = new flap.Guard(() => true).when({
           is   : pointer('/b'),
           then : () => false
         })
 
-        testGuard.value({a: 'z'}).should.be.true
-        testGuard.value({b: 'y'}).should.be.false
+        testGuard({a: 'z'}).should.be.true
+        testGuard({b: 'y'}).should.be.false
       })
 
-      it('provided a JSON relation (Path literal), should avoid calling the original function `func` if `is` query is non-empty as `value` is called', () => {
+      it('provided a JSON relation (Path literal), should avoid calling the original function `func` if `is` query is non-empty as guarded function is called', () => {
         const testGuard = new flap.Guard(() => true).when({
           is   : path('$..b'),
           then : () => false
         })
 
-        testGuard.value({a: 'z'}).should.be.true
-        testGuard.value({b: 'y'}).should.be.false
+        testGuard({a: 'z'}).should.be.true
+        testGuard({b: 'y'}).should.be.false
       })
 
-      it('provided a JSON relation (Abstract literal), should avoid calling the original function `func` if `is` query is non-empty as `value` is called', () => {
+      it('provided a JSON relation (Query literal), should avoid calling the original function `func` if `is` query is non-empty as guarded function is called', () => {
+        const testGuard = new flap.Guard(() => true).when({
+          is   : query('b'),
+          then : () => false
+        })
+
+        testGuard({a: 'z'}).should.be.true
+        testGuard({b: 'y'}).should.be.false
+      })
+
+      it('provided a JSON Where pattern (abstract literal), should avoid calling the original function `func` if `is` query is non-empty as guarded function is called', () => {
         const testGuard = new flap.Guard(() => true).when({
           is   : $('/b'),
           then : () => false
         })
 
-        testGuard.value({a: 'z'}).should.be.true
-        testGuard.value({b: 'y'}).should.be.false
+        testGuard({a: 'z'}).should.be.true
+        testGuard({b: 'y'}).should.be.false
       })
 
       describe('chainability', () => {
@@ -103,26 +133,22 @@ describe('flap', () => {
         it('should be chainable', () => {
           const testGuard = new flap.Guard(() => true).when(() => {})
 
-          testGuard.should.be.an.instanceof(flap.Guard)
+          isChainable(testGuard).should.be.true
         })
 
         it('should support N items in chain', () => {
-          testGuard.value(1, 2).should.equal(3)
-          testGuard.value(-1, 2).should.equal('a')
-          testGuard.value(1,-1).should.equal('b')
+          testGuard(1, 2).should.equal(3)
+          testGuard(-1, 2).should.equal('a')
+          testGuard(1,-1).should.equal('b')
         })
 
         it('should return the last value when multiple `when`s are triggered in a chain', () => {
-          testGuard.value(-1, -1).should.equal('b')
+          testGuard(-1, -1).should.equal('b')
         })
       })
     })
 
-    describe('value', () => {
-      it('should be defined', () => {
-        flap.Guard.prototype.value.should.be.a('function')
-      })
-
+    describe('()', () => {
       it('should call every `Guard` in the chain', () => {
         const testGuard = new flap.Guard((a,b,c) => a + b + c)
           .before((a,b,c) => [(a < 0 ? 1 : a), b, c])
@@ -139,10 +165,10 @@ describe('flap', () => {
             then : (a,b,c) => a + '!'
           })
 
-        testGuard.value(-1, 2, 4).should.equal(7) // only "before"
-        testGuard.value(1, 1, 5).should.equal(1)  // "before", "a === b"
-        testGuard.value(4, 1, 3).should.equal(3)  // "before", "a > b"
-        testGuard.value('foo').should.equal('foo!')
+        testGuard(-1, 2, 4).should.equal(7) // only "before"
+        testGuard(1, 1, 5).should.equal(1)  // "before", "a === b"
+        testGuard(4, 1, 3).should.equal(3)  // "before", "a > b"
+        testGuard('foo').should.equal('foo!')
       })
     })
 
@@ -158,11 +184,11 @@ describe('flap', () => {
       })
 
       it('should be chainable', () => {
-        testGuard.should.be.an.instanceof(flap.Guard)
+        isChainable(testGuard).should.be.true
       })
 
       it('should process arguments provided to `value` before any `Guard`s process them', () => {
-        testGuard.value(-1, 1, 1).should.equal(3)
+        testGuard(-1, 1, 1).should.equal(3)
       })
     })
 
@@ -183,11 +209,11 @@ describe('flap', () => {
       })
 
       it('should be chainable', () => {
-        testGuard.should.be.an.instanceof(flap.Guard)
+        isChainable(testGuard).should.be.true
       })
 
       it('should process arguments provided to `value` after all other `Guard`s run', () => {
-        testGuard.value(1,2,3).should.equal(10)
+        testGuard(1,2,3).should.equal(10)
       })
     })
 
@@ -203,11 +229,11 @@ describe('flap', () => {
       })
 
       it('should be chainable', () => {
-        testGuard.should.be.an.instanceof(flap.Guard)
+        isChainable(testGuard).should.be.true
       })
 
       it('should map arguments provided to `value` before any `Guard`s process them', () => {
-        testGuard.value(1,2,3).should.equal(18)
+        testGuard(1,2,3).should.equal(18)
       })
     })
 
@@ -223,11 +249,11 @@ describe('flap', () => {
       })
 
       it('should be chainable', () => {
-        testGuard.should.be.an.instanceof(flap.Guard)
+        isChainable(testGuard).should.be.true
       })
 
       it('should intercept arguments provided to `value` before any `Guard`s process them', () => {
-        testGuard.value(false,'a',false).should.equal(false)
+        testGuard(false,'a',false).should.equal(false)
       })
     })
 
@@ -246,12 +272,12 @@ describe('flap', () => {
       })
 
       it('should be chainable', () => {
-        testGuard.should.be.an.instanceof(flap.Guard)
+        isChainable(testGuard).should.be.true
       })
 
       it('should intercept arguments provided to `value` before any `Guard`s process them', () => {
-        testGuard.value(3,2,1).should.equal(1)
-        testGuard.value(4,3,2).should.equal(9)
+        testGuard(3,2,1).should.equal(1)
+        testGuard(4,3,2).should.equal(9)
       })
     })
 
@@ -270,12 +296,12 @@ describe('flap', () => {
       })
 
       it('should be chainable', () => {
-        testGuard.should.be.an.instanceof(flap.Guard)
+        isChainable(testGuard).should.be.true
       })
 
       it('should intercept arguments provided to `value` before any `Guard`s process them', () => {
-        testGuard.value(2,4,6).should.equal(2)
-        testGuard.value(1,4,6).should.equal(11)
+        testGuard(2,4,6).should.equal(2)
+        testGuard(1,4,6).should.equal(11)
       })
     })
 
@@ -294,13 +320,13 @@ describe('flap', () => {
       })
 
       it('should be chainable', () => {
-        testGuard.should.be.an.instanceof(flap.Guard)
+        isChainable(testGuard).should.be.true
       })
 
       it('should intercept arguments provided to `value` before any `Guard`s process them', () => {
-        testGuard.value(1,3,5).should.equal(9)
-        testGuard.value(1,3,6).should.equal(0)
-        testGuard.value(1,4,6).should.equal(0)
+        testGuard(1,3,5).should.equal(9)
+        testGuard(1,3,6).should.equal(0)
+        testGuard(1,4,6).should.equal(0)
       })
     })
 
@@ -316,12 +342,12 @@ describe('flap', () => {
       })
 
       it('should be chainable', () => {
-        testGuard.should.be.an.instanceof(flap.Guard)
+        isChainable(testGuard).should.be.true
       })
 
       it('should avoid calling the function altogether if the condition is met', () => {
-        testGuard.value(1,3,5).should.equal(9);
-        chai.should(testGuard.value(2,3,5)).not.exist
+        testGuard(1,3,5).should.equal(9);
+        chai.should(testGuard(2,3,5)).not.exist
       })
     })
   })
@@ -336,8 +362,14 @@ describe('flap', () => {
         const testFunc  = (a, b) => a + b
         const testGuard = flap.guard(testFunc)
 
-        testGuard.should.be.an.instanceof(flap.Guard)
-        testGuard.func.should.equal(testFunc)
+        testGuard.should.be.a('function')
+        testGuard(1,2).should.equal(3)
+      })
+
+      it('should be chainable', () => {
+        const testGuard = flap.guard()
+
+        isChainable(testGuard).should.be.true
       })
     })
 
@@ -352,13 +384,13 @@ describe('flap', () => {
       it('should bind a `guard` function to `Function.prototype` that is an alias of `new Guard`', () => {
         const testFunc = (a,b) => a + b
 
-        ((a) => a).guard.should.be.a('object') // anon function
-        testFunc.guard.should.be.a('object')
-        testFunc.guard.should.be.an.instanceof(flap.Guard)
+        ((a) => a).guard.should.be.a('function') // anon function
+        testFunc.guard.should.be.a('function')
+        // testFunc.guard.should.be.an.instanceof(flap.Guard)
         testFunc.guard.when({
           is   : (a,b) => a % 2 === 0,
           then : (a,b) => true
-        }).value(2, 3).should.equal(true)
+        })(2, 3).should.equal(true)
       })
     })
 

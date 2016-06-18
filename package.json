@@ -39,7 +39,8 @@
     "url": "https://github.com/slurmulon/flap/issues"
   },
   "dependencies": {
-    "json-rel": "~0.0.10"
+    "json-rel": "~0.0.10",
+    "json-where": "^1.0.5"
   },
   "devDependencies": {
     "babel-cli": "^6.7.5",
