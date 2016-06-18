@@ -30,20 +30,16 @@
     ```javascript
     const linear = flap
       .guard((m,x,b) => (m * x) + b)
-      .map(parseInt)
+      .map((arg) => parseInt(arg))
       .when({
         is   : (m,x,b) => (m * x) < 0,
         then : (m,x,b) => 0
       })
-      .when({
-        is   : (m,x,b) => m <= 0,
-        then : (m,x,b) => undefined
-      })
-      .after((y) => y instanceof Number ? y.toFixed(2) : y)
+      .after((y) => y.constructor === Number ? y.toFixed(2) : 'invalid')
 
-    linear.value(1, -1, 3)        // 0.00
-    linear.value('1', '2.0', '3') // 6.00
-    linear.value(-2, 2, 5)        // ???
+    linear(1, -1, 3)        // 0.00
+    linear('1', '2.0', '3') // 5.00
+    linear(-2, 2, 'foo')    // 'invalid'
     ```
 
   * `unless`
@@ -56,8 +52,8 @@
         then : (a,b,c) => 'oddball'
       })
 
-    add.value(2, 4, 6) // -> 12
-    add.value(1, 3, 5) // -> 'oddball'
+    add(2, 4, 6) // -> 12
+    add(1, 3, 5) // -> 'oddball'
     ````
 
 ## Installation
@@ -83,7 +79,7 @@
     const divide = ((a,b) => a / b).guard.when({
       is   : (a,b) => b === 0,
       then : (a,b) => 'derp'
-    }).value
+    })
 
     divide(10, 2) // -> 5
     divide(1, 0)  // -> 'derp'
@@ -98,7 +94,7 @@
 
   * Queries
 
-    When `is` is not a `Function`, it will be interpreted as a [json-rel](http://npmjs.com/slurmulon/json-rel/) path, which is simply a unification of the `json-pointer`, `json-path`, and `json-query` specifications.
+    When `is` is not a `Function`, it will be interpreted as a [json-where](http://npmjs.com/slurmulon/json-where/) pattern, which is simply a unification of the `json-pointer`, `json-path`, and `json-query` specifications.
 
     These specifications are extremely useful for performing complex / conditional searches on objects:
 
@@ -111,9 +107,9 @@
       then : (link) => link
     })
 
-    links.value({ response: null })                // -> []
-    links.value({ response: { link: null } })      // -> []
-    links.value({ response: { link: '/v1/api' } }) // -> [{ link: '/v1/api' }]
+    links({ response: null })                // -> []
+    links({ response: { link: null } })      // -> []
+    links({ response: { link: '/v1/api' } }) // -> [{ link: '/v1/api' }]
     ```
 
 ## Contributing
