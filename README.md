@@ -121,3 +121,7 @@
 ## TODO
 
  - [ ] documentation (guide)
+
+## License
+
+MIT
