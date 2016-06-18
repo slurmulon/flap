@@ -4,15 +4,14 @@
   "description": "Guard clauses for ES6",
   "main": "./lib/flap.js",
   "scripts": {
-    "build": "node ./node_modules/.bin/babel src --out-dir lib",
-    "lint": "node ./node_modules/babel-eslint/index.js src/flap.js",
-    "start": "node ./node_modules/.bin/babel-node src/flap.js",
+    "build": "babel src --out-dir lib",
+    "lint": "babel-eslint src/flap.js",
+    "start": "babel-node src/flap.js",
     "pretest": "npm run build",
     "test": "mocha --reporter nyan --compilers js:babel-register test",
     "auto-start": "nodemon --exec \"npm run lint && npm start\" --ignore public/js",
-    "preinstall": "npm install --ignore-scripts && npm run build",
     "prepublish": "npm run build",
-    "coverage": "node ./node_modules/.bin/nyc --require babel-core/register node_modules/.bin/mocha test/"
+    "coverage": "nyc --require babel-core/register node_modules/.bin/mocha test/"
   },
   "repository": {
     "type": "git",
@@ -39,7 +38,6 @@
     "url": "https://github.com/slurmulon/flap/issues"
   },
   "dependencies": {
-    "json-rel": "~0.0.10",
     "json-where": "^1.0.5"
   },
   "devDependencies": {
