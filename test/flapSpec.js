@@ -1,7 +1,7 @@
 import 'blanket'
 
 import * as flap from '../src/flap'
-import {$, path, pointer, query, AbstractRel} from 'json-rel'
+import {$, path, pointer, query} from 'json-where'
 
 import chai from 'chai'
 import chaiThings from 'chai-things'
@@ -55,7 +55,7 @@ describe('flap', () => {
         flap.Guard.prototype.when.should.be.a('function')
       })
 
-      it('provided a function, should avoid calling the original function `func` if `is` is truthy as `value` is called', () => {
+      it('provided a function, should avoid calling the original function `func` if `is` is truthy as guarded function is called', () => {
         const testGuard = new flap.Guard(() => true).when({
           is   : (a) => a === 0, 
           then : (a) => false
@@ -65,7 +65,7 @@ describe('flap', () => {
         testGuard(1).should.be.true
       })
 
-      it('provided a JSON relation (string), should avoid calling the original function `func` if `is` query is non-empty as `value` is called', () => {
+      it('provided a JSON relation (string), should avoid calling the original function `func` if `is` query is non-empty as guarded function is called', () => {
         const testGuard = new flap.Guard(() => true).when({
           is   : '/b',
           then : () => false
@@ -75,7 +75,7 @@ describe('flap', () => {
         testGuard({b: 'y'}).should.be.false
       })
 
-      it('provided a JSON relation (Pointer literal), should avoid calling the original function `func` if `is` query is non-empty as `value` is called', () => {
+      it('provided a JSON relation (Pointer literal), should avoid calling the original function `func` if `is` query is non-empty as guarded function is called', () => {
         const testGuard = new flap.Guard(() => true).when({
           is   : pointer('/b'),
           then : () => false
@@ -85,7 +85,7 @@ describe('flap', () => {
         testGuard({b: 'y'}).should.be.false
       })
 
-      it('provided a JSON relation (Path literal), should avoid calling the original function `func` if `is` query is non-empty as `value` is called', () => {
+      it('provided a JSON relation (Path literal), should avoid calling the original function `func` if `is` query is non-empty as guarded function is called', () => {
         const testGuard = new flap.Guard(() => true).when({
           is   : path('$..b'),
           then : () => false
@@ -95,7 +95,17 @@ describe('flap', () => {
         testGuard({b: 'y'}).should.be.false
       })
 
-      it('provided a JSON Where pattern (abstract literal), should avoid calling the original function `func` if `is` query is non-empty as `value` is called', () => {
+      it('provided a JSON relation (Query literal), should avoid calling the original function `func` if `is` query is non-empty as guarded function is called', () => {
+        const testGuard = new flap.Guard(() => true).when({
+          is   : query('b'),
+          then : () => false
+        })
+
+        testGuard({a: 'z'}).should.be.true
+        testGuard({b: 'y'}).should.be.false
+      })
+
+      it('provided a JSON Where pattern (abstract literal), should avoid calling the original function `func` if `is` query is non-empty as guarded function is called', () => {
         const testGuard = new flap.Guard(() => true).when({
           is   : $('/b'),
           then : () => false
