@@ -28,7 +28,7 @@
     `after` to format the final result to 3 decimal places
 
     ```javascript
-    const linear = flap
+    const yIntercept = flap
       .guard((m,x,b) => (m * x) + b)
       .map((arg) => parseInt(arg))
       .when({
@@ -37,9 +37,9 @@
       })
       .after((y) => y.constructor === Number ? y.toFixed(2) : 'invalid')
 
-    linear(1, -1, 3)        // 0.00
-    linear('1', '2.0', '3') // 5.00
-    linear(-2, 2, 'foo')    // 'invalid'
+    yIntercept(1, -1, 3)        // 0.00
+    yIntercept('1', '2.0', '3') // 5.00
+    yIntercept(-2, 2, 'foo')    // 'invalid'
     ```
 
   * `unless`
