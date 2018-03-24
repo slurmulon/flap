@@ -1,5 +1,3 @@
-'use strict'
-
 import { $, AbstractRef } from 'json-where'
 
 /**
