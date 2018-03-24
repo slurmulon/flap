@@ -1,6 +1,6 @@
 'use strict'
 
-import {$, AbstractRef} from 'json-where'
+import { $, AbstractRef } from 'json-where'
 
 /**
  * Implements several chainable guard clauses, similar to those
@@ -24,7 +24,7 @@ export class Guard {
    * @param {Function} func function to guard with clauses
    * @returns {Function} native Function with Guard own properties/methods appended
    */
-  constructor(func: Function = _ => {}) {
+  constructor (func: Function = _ => {}) {
     this.func = func
 
     Object.getOwnPropertyNames(Guard.prototype).forEach((prop) => {
@@ -58,7 +58,7 @@ export class Guard {
    * isEven(1)   // -> false
    * isEven('6') // -> true
    */
-  when({is, then}): Function {
+  when ({ is, then }): Function {
     if (is instanceof Function) {
       return new Guard((...args) =>
         (is(...args) ? then : this.func)(...args)
@@ -91,7 +91,7 @@ export class Guard {
    * @param {Function} then callback Function for when `is` condition matches arguments
    * @returns {Guard} new Guard (identical to original if condition isn't met)
    */
-  unless({is, then}): Function {
+  unless ({ is, then }): Function {
     return new Guard(then).when({ is, then: this.func })
   }
 
@@ -103,7 +103,7 @@ export class Guard {
    * @param {Function} then callback Function for when `is` condition matches arguments
    * @returns {Guard} new Guard (identical to original if condition isn't met)
    */
-  all({is, then}): Function {
+  all ({ is, then }): Function {
     return this.when({ is: (...args) => args.length === args.filter(is).length, then })
   }
 
@@ -115,7 +115,7 @@ export class Guard {
    * @param {Function} then callback Function for when `is` condition matches arguments
    * @returns {Guard} new Guard (identical to original if condition isn't met)
    */
-  any({is, then}): Function {
+  any ({ is, then }): Function {
     return this.when({ is: (...args) => args.filter(is).length, then })
   }
 
@@ -126,7 +126,7 @@ export class Guard {
    * @param {Function} then callback Function for when `is` condition matches arguments
    * @returns {Guard} new Guard with `then` at the top of the chain
    */
-  before(then: Function): Function {
+  before (then: Function): Function {
     return new Guard((...args) => this.func(...then(...args)))
   }
 
@@ -136,7 +136,7 @@ export class Guard {
    * @param {Function} then callback Function for when `is` condition matches arguments
    * @returns {Guard} new Guard with `then` at the bottom of the chain
    */
-  after(then: Function): Function {
+  after (then: Function): Function {
     return new Guard((...args) => then(this.func(...args)))
   }
 
@@ -146,7 +146,7 @@ export class Guard {
    * @param {Function} mapper callback Function to call on each argument
    * @returns {Guard} new Guard with mapped arguments provided to original function
    */
-  map(mapper: Function): Function {
+  map (mapper: Function): Function {
     return new Guard((...args) => this.func(...args.map(mapper)))
   }
 
@@ -156,7 +156,7 @@ export class Guard {
    * @param {Function} is filter Function (truthy)
    * @returns {Guard} new Guard with filtered arguments provided to original function
    */
-  filter(is: Function): Function {
+  filter (is: Function): Function {
     return new Guard((...args) => this.func(...args.filter(is)))
   }
 
@@ -166,7 +166,7 @@ export class Guard {
    * @param {Function} is condition to abort on
    * @returns {Guard} new Guard with appended abort `when` clause
    */
-  abort(is: Function): Function {
+  abort (is: Function): Function {
     return this.when({ is, then: () => {} })
   }
 
@@ -200,7 +200,7 @@ export function guard(func: Function) {
  * divide(6, 2) // -> 3
  * divide(6, 0) // -> 6 (0 is replaced by 1 via `when`)
  */
-export function bind() {
+export function bind () {
   Object.defineProperty(Function.prototype, 'guard', {
     enumerable: false,
     configurable: true,
@@ -213,7 +213,7 @@ export function bind() {
 /**
  * Removes `guard` function from the global `Function.prototype` object.
  */
-export function unbind() {
+export function unbind () {
   delete Function.prototype.guard
 }
 
