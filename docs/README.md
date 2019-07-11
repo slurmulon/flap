@@ -211,6 +211,20 @@ example(-1,1,1) // 3
 
 ### `after`
 
+Processes the final result of the guard chain.
+
+```js
+const example = ((a,b,c) => a + b + c).guard
+  .when({
+    is   : (a,b,c) => a === 1,
+    then : (a,b,c) => 5
+  })
+  .after(res => res *= 2)
+
+example(1,2,3) // 10
+example(0,4,6) // 20
+```
+
 ### `map`
 
 ### `filter`
