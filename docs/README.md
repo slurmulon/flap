@@ -90,6 +90,25 @@ follow({ href: '/v1/api/user/1'}, { junk: true }) // -> Promised GET to '/v1/api
 
 ### `when`
 
+All of the other guards are based on `when`, so it is certainly the most important and powerful guard.
+
+This guard accepts an object with two properties: `is` and `then`:
+
+```js
+when({
+  is: function | string,
+  then: function
+})
+```
+
+If the value of `is` is a function that returns a truthy value, the `then` function is called
+and the return value of that function is used instead of the original guarded function's return value.
+
+If the value of `is` is a string, it will be interpreted as a [`json-where`](https://npmjs.com/json-where) pattern,
+and the `then` function is called only with the arguments that match the `is` pattern.
+
+In either case, `when`'s `then` function is only ever invoked if `is` matches against the provided arguments.
+
 ### `unless`
 
 ### `all`
