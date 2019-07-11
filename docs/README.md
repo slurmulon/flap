@@ -190,9 +190,24 @@ const example = ((a,b,c) => a + b + c).guard.any({
   is   : arg => a % 2 === 0,
   then : () => 0
 })
+
+example(1,3,5) // 9
+example(1,3,6) // 0
+example(1,4,6) // 0
+
 ```
 
 ### `before`
+
+Processes all arguments with `then` before any other functions in the guard chain are called.
+
+```js
+const example = ((a,b,c) => a + b + c).guard.before(
+  (a,b,c) => [(a < 0 ? 1 : a), b, c]
+)
+
+example(-1,1,1) // 3
+```
 
 ### `after`
 
