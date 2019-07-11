@@ -111,6 +111,20 @@ In either case, `when`'s `then` function is only ever invoked if `is` matches ag
 
 ### `unless`
 
+Invokes the original guarded function unless the `is` condition is met.
+
+Otherwise the `then` function is invoked and its return value will be used instead.
+
+```js
+const example = ((a,b,c) => a + b + c).guard.unless({
+  is   : (a,b,c) => a % 2 === 0,
+  then : (a,b,c) => 1
+})
+
+example(3,2,1) // 1
+example(4,3,2) // 9
+```
+
 ### `all`
 
 ### `any`
