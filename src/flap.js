@@ -65,7 +65,7 @@ export class Guard {
       return new Guard((...args) => {
         let matches = []
 
-        if (is && is.constructor === String) {
+        if (typeof is === 'string') {
           matches = args.filter(arg => $(is, arg).any())
         } else if (is instanceof AbstractRef) {
           matches = args.filter(arg => is.any(arg))
@@ -149,11 +149,12 @@ export class Guard {
   }
 
   /**
-   * Filters arguments that match `is` (only those matchin truthy will be passed in).
+   * Filters arguments that match `is` (only those matching truthy will be passed in).
    *
    * @param {Function} is filter Function (truthy)
    * @returns {Guard} new Guard with filtered arguments provided to original function
    */
+  // TODO: Consider retaining parameter arity instead of using a reductive filter
   filter (is: Function): Function {
     return new Guard((...args) => this.func(...args.filter(is)))
   }
