@@ -252,3 +252,14 @@ example('bad', null, 1.2, 2.0, 3) // 5
 ```
 
 ### `abort`
+
+Aborts the guarded function chain completely if the `is` condition matches.
+
+```js
+const example = ((a,b,c) => a + b + c)
+  .guard
+  .abort(a => a % 2 === 0)
+
+example(1,3,5) // 9
+example(2,3,5) // null
+```
