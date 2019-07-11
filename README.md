@@ -27,7 +27,7 @@ npm i flap
 
 ## Documentation
 
-You can find detailed documentation and examples at [https://slurmulon.github.io/flap](https://slurmulon.github.io/flap].
+You can find detailed documentation and examples at [https://slurmulon.github.io/flap](https://slurmulon.github.io/flap).
 
 ## Contributing
 
