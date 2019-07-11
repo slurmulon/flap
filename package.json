@@ -1,7 +1,7 @@
 {
   "name": "flap",
   "version": "1.0.3",
-  "description": "Guard clauses for ES6",
+  "description": "Guard clauses for JS",
   "main": "./lib/flap.js",
   "scripts": {
     "build": "babel src --out-dir lib",
