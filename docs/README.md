@@ -165,6 +165,18 @@ example(4,3,2) // 9
 
 ### `all`
 
+Invokes the original guarded function unless the `is` condition is met for every argument provided to the function.
+
+```js
+const example = ((a,b,c) => a + b + c).guard.all({
+  is   : arg => arg % 2 === 0,
+  then : () => 0
+})
+
+example(2,4,6) // 0
+example(1,4,6) // 11
+```
+
 ### `any`
 
 ### `before`
