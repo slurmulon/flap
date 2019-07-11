@@ -35,7 +35,7 @@
         is   : (m,x,b) => (m * x) < 0,
         then : (m,x,b) => 0
       })
-      .after((y) => y.constructor === Number ? y.toFixed(2) : 'invalid')
+      .after((y) => typeof y === 'number' ? y.toFixed(2) : 'invalid')
 
     yIntercept(1, -1, 3)        // 0.00
     yIntercept('1', '2.0', '3') // 5.00
@@ -107,9 +107,9 @@
       then : (link) => link
     })
 
-    links({ response: null })                // -> []
-    links({ response: { link: null } })      // -> []
-    links({ response: { link: '/v1/api' } }) // -> [{ link: '/v1/api' }]
+    links({ response: null })           // -> []
+    links({ response: { link: null } }) // -> []
+    links({ response: { link: { href: '/v1/api' } } }) // -> [{ link: '/v1/api' }]
     ```
 
 ## Contributing
