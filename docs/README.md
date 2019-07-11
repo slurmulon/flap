@@ -241,4 +241,14 @@ example(1,2,3) // 18
 
 ### `filter`
 
+Filters arguments that match `is`. Only those arguments that match will be passed on.
+
+```js
+const example((...args) => args.reduce((acc, val) => acc + val))
+  .guard
+  .filter(arg => Number.isInteger(arg))
+
+example('bad', null, 1.2, 2.0, 3) // 5
+```
+
 ### `abort`
