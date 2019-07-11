@@ -346,7 +346,7 @@ describe('flap', () => {
       })
 
       it('should avoid calling the function altogether if the condition is met', () => {
-        testGuard(1,3,5).should.equal(9);
+        testGuard(1,3,5).should.equal(9)
         chai.should(testGuard(2,3,5)).not.exist
       })
     })
