@@ -176,7 +176,7 @@ export class Guard {
  * @param {Function} func function to wrap with chainable guard clauses
  * @returns {Guard} new chainable Guard
  */
-export function guard(func: Function) {
+export function guard (func: Function) {
   return new Guard(func)
 }
 
