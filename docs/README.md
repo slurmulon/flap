@@ -165,7 +165,9 @@ example(4,3,2) // 9
 
 ### `all`
 
-Invokes the original guarded function unless the `is` condition is met for every argument provided to the function.
+When every argument matches `is`, this guard calls `then`.
+
+Otherwise it calls the original guarded function.
 
 ```js
 const example = ((a,b,c) => a + b + c).guard.all({
@@ -178,6 +180,17 @@ example(1,4,6) // 11
 ```
 
 ### `any`
+
+When any argument matches `is`, this guard calls `then`.
+
+Otherwise it calls the original guarded function.
+
+```js
+const example = ((a,b,c) => a + b + c).guard.any({
+  is   : arg => a % 2 === 0,
+  then : () => 0
+})
+```
 
 ### `before`
 
