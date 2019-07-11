@@ -241,7 +241,7 @@ example(1,2,3) // 18
 
 ### `filter`
 
-Filters arguments that match `is`. Only those arguments that match will be passed on.
+Filters arguments that return truthy. Only unfiltered arguments will be be passed on through the guard chain.
 
 ```js
 const example((...args) => args.reduce((acc, val) => acc + val))
@@ -253,7 +253,7 @@ example('bad', null, 1.2, 2.0, 3) // 5
 
 ### `abort`
 
-Aborts the guarded function chain completely if the `is` condition matches.
+Aborts the guarded function chain completely if the provided function returns truthy.
 
 ```js
 const example = ((a,b,c) => a + b + c)
