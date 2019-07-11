@@ -202,9 +202,11 @@ example(1,4,6) // 0
 Processes all arguments with `then` before any other functions in the guard chain are called.
 
 ```js
-const example = ((a,b,c) => a + b + c).guard.before(
-  (a,b,c) => [(a < 0 ? 1 : a), b, c]
-)
+const example = ((a,b,c) => a + b + c)
+  .guard
+  .before(
+    (a,b,c) => [(a < 0 ? 1 : a), b, c]
+  )
 
 example(-1,1,1) // 3
 ```
@@ -226,6 +228,16 @@ example(0,4,6) // 20
 ```
 
 ### `map`
+
+Maps each argument against the provided function.
+
+```js
+const example = ((a,b,c) => a + b + c)
+  .guard
+  .map(arg => arg *= 3)
+
+example(1,2,3) // 18
+```
 
 ### `filter`
 
