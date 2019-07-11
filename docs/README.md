@@ -129,7 +129,23 @@ example({ b: 'y' }) // false
 
 In either case, `when`'s `then` function is only ever invoked if `is` matches against the provided arguments.
 
-Multiple `when` guards can also be chained.
+Lastly, multiple `when` guards can be chained together.
+
+```js
+const example = ((a,b) => a + b).guard
+  .when({
+    is   : (a,b) => a < 0,
+    then : (a,b) => 'a'
+  })
+  .when({
+    is   : (a,b) => b < 0,
+    then : (a,b) => 'b'
+  })
+
+example(1, 2) // 3
+example(-1, 2) // 'a'
+example(1, -1) // 'b'
+```
 
 ### `unless`
 
