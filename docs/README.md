@@ -64,25 +64,25 @@ yIntercept(-2, 2, 'foo')    // 'invalid'
 
 ### Patterns
 
-When `is` is a `string`, it will be interpreted as a [json-where](https://npmjs.com/json-where/) pattern and matched against each argument.n
+When `is` is a `string`, it will be interpreted as a [json-where](https://npmjs.com/json-where/) pattern and matched against each argument.
 
 `json-where` is simply a transparent unification of the `json-pointer`, `json-path`, and `json-query` specifications.
 
-These specifications are useful for performing complex / conditional matches on objects:
+These specifications are useful for performing complex and conditional matches on objects:
 
 ```javascript
 import axios from 'axios'
 
 // Follows  any object (i.e. calls GET) with an `href` property
-const follow = (() => []).guard.when({
+const follow = (() => new Promise()).guard.when({
   is   : '$.href',
   then : (...links) => Promise.all(links.map(
     link => axios.get(link.href)
   ))
 })
 
-follow(null) // -> []
-follow({ junk: true }) // -> []
+follow(null) // -> No action
+follow({ junk: true }) // -> No action
 follow({ href: '/v1/api/user/1'}, { junk: true }) // -> Promised GET to '/v1/api/user/1'
 ```
 
