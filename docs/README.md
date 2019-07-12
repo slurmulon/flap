@@ -35,7 +35,7 @@ The most straight-forward usage is to simply import `flap` and then use `flap.gu
 import flap from 'flap'
 
 const sum = (...args) => args.reduce((acc, val) => acc + val)
-const p10sum = flap.guard(total).map(arg => arg + 10)
+const p10sum = flap.guard(sum).map(arg => arg + 10)
 
 sum(1, 2, 3) // 6
 p10sum(1, 2, 3) // 36
@@ -64,11 +64,11 @@ yIntercept(-2, 2, 'foo')    // 'invalid'
 
 ### Patterns
 
-When `is` is **not** a `Function`, it will be interpreted as a [json-where](https://npmjs.com/json-where/) pattern
+When `is` is a `string`, it will be interpreted as a [json-where](https://npmjs.com/json-where/) pattern and matched against each argument.n
 
 `json-where` is simply a transparent unification of the `json-pointer`, `json-path`, and `json-query` specifications.
 
-These specifications are extremely useful for performing complex / conditional matches on objects:
+These specifications are useful for performing complex / conditional matches on objects:
 
 ```javascript
 import axios from 'axios'
@@ -92,7 +92,7 @@ follow({ href: '/v1/api/user/1'}, { junk: true }) // -> Promised GET to '/v1/api
 
 All of the other guards are based on `when`, so it is certainly the most important and powerful guard.
 
-This guard (and all of the others) accepts an object with two properties: `is` and `then`:
+This guard accepts an object with two properties: `is` and `then`:
 
 ```js
 {
@@ -201,6 +201,8 @@ example(1,4,6) // 0
 
 Processes all arguments with `then` before any other functions in the guard chain are called.
 
+The resulting `array` of the `then` function will be used as the arguments to the original guarded function.
+
 ```js
 const example = ((a,b,c) => a + b + c)
   .guard
@@ -216,7 +218,8 @@ example(-1,1,1) // 3
 Processes the final result of the guard chain.
 
 ```js
-const example = ((a,b,c) => a + b + c).guard
+const example = ((a,b,c) => a + b + c)
+  .guard
   .when({
     is   : (a,b,c) => a === 1,
     then : (a,b,c) => 5
@@ -241,10 +244,10 @@ example(1,2,3) // 18
 
 ### `filter`
 
-Filters arguments that return truthy. Only unfiltered arguments will be be passed on through the guard chain.
+Filters for arguments that return truthy. Only matching arguments will be be passed on through the guard chain.
 
 ```js
-const example((...args) => args.reduce((acc, val) => acc + val))
+const example = ((...args) => args.reduce((acc, val) => acc + val))
   .guard
   .filter(arg => Number.isInteger(arg))
 
